@@ -1,33 +1,27 @@
 package com.accenture.example.firstapp;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 
-interface OnOkClickListener {
-    void onOkClick();
-}
-
-public class MainActivity extends AppCompatActivity implements OnOkClickListener {
+public class MainActivity extends AppCompatActivity
+        implements ExplainReadPhoneStateDialogFragment.OnOkClickListener {
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    public static final int OPEN_APP_SETTINGS_REQUEST_CODE = 102;
     private static final int READ_PHONE_STATE_REQUEST_CODE = 101;
-    private static final int OPEN_APP_SETTINGS_REQUEST_CODE = 102;
 
     private boolean preReadPhoneStateRationale, postReadPhoneStateRationale;
 
@@ -105,65 +99,20 @@ public class MainActivity extends AppCompatActivity implements OnOkClickListener
     private void afterReadPhoneStatePermissionGranted() {
         Log.v(LOG_TAG, "-> afterReadPhoneStatePermissionGranted");
 
-
+        try {
+            TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            Log.d(LOG_TAG, "-> afterReadPhoneStatePermissionGranted -> " + tMgr);
+            String mPhoneNumber = tMgr.getLine1Number();
+            TextView textView = findViewById(R.id.textViewMobileNumber);
+            textView.setText(mPhoneNumber);
+        } catch (SecurityException e) {
+            Log.e(LOG_TAG, "-> afterReadPhoneStatePermissionGranted -> ", e);
+        }
     }
 
     @Override
     public void onOkClick() {
         Log.v(LOG_TAG, "-> onOkClick");
         checkReadPhoneStatePermission();
-    }
-
-    public static class ExplainReadPhoneStateDialogFragment extends DialogFragment {
-
-        public static final String LOG_TAG = ExplainReadPhoneStateDialogFragment.class.getSimpleName();
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            Log.v(LOG_TAG, "-> onCreateDialog");
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Please allow Phone permission to work the app")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Log.v(LOG_TAG, "-> onCreateDialog -> OK");
-                            if (getActivity() instanceof OnOkClickListener) {
-                                ((OnOkClickListener) getActivity()).onOkClick();
-                            }
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
-    public static class RedirectToAppSettingsDialogFragment extends DialogFragment {
-
-        public static final String LOG_TAG = RedirectToAppSettingsDialogFragment.class.getSimpleName();
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            Log.v(LOG_TAG, "-> onCreateDialog");
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Please allow Phone permission to work the app\n" +
-                    "Click OK -> Permissions -> Allow Phone permissions")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Log.v(LOG_TAG, "-> onCreateDialog -> OK");
-
-                            Intent intent = new Intent();
-                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                            intent.setData(uri);
-                            getActivity().startActivityForResult(intent, OPEN_APP_SETTINGS_REQUEST_CODE);
-                        }
-                    });
-
-            return builder.create();
-        }
     }
 }
