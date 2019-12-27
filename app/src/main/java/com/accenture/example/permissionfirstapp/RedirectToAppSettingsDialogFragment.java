@@ -1,4 +1,4 @@
-package com.accenture.example.firstapp;
+package com.accenture.example.permissionfirstapp;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import static com.accenture.example.firstapp.MainActivity.OPEN_APP_SETTINGS_REQUEST_CODE;
+import static com.accenture.example.permissionfirstapp.MainActivity.OPEN_APP_SETTINGS_REQUEST_CODE;
 
 public class RedirectToAppSettingsDialogFragment extends DialogFragment {
 

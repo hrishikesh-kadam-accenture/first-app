@@ -1,4 +1,4 @@
-package com.accenture.example.firstapp;
+package com.accenture.example.permissionfirstapp;
 
 import android.Manifest;
 import android.content.Context;
