@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
                     Log.i(LOG_TAG, "-> onRequestPermissionsResult -> READ_PHONE_STATE permission granted");
                     afterReadPhoneStatePermissionGranted();
                 } else {
-                    Log.i(LOG_TAG, "-> onRequestPermissionsResult -> READ_PHONE_STATE permission not granted");
+                    Log.i(LOG_TAG, "-> onRequestPermissionsResult -> READ_PHONE_STATE permission denied");
                     postReadPhoneStateRationale = ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.READ_PHONE_STATE);
                     Log.d(LOG_TAG, "-> onRequestPermissionsResult -> preReadPhoneStateRationale = " + preReadPhoneStateRationale +
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity
 
         try {
             TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            Log.d(LOG_TAG, "-> afterReadPhoneStatePermissionGranted -> " + tMgr);
             String mPhoneNumber = tMgr.getLine1Number();
             TextView textView = findViewById(R.id.textViewMobileNumber);
             textView.setText(mPhoneNumber);
